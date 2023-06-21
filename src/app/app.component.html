@@ -1,12 +1,21 @@
 
 <!-- Basic example of displaying a template in an ng-container or a real element -->
+<!-- The template is just some HTML and such that can be displayed inside another component. -->
+<!-- So by itself, the following three lines don't display anything. They're just saved in memory to be used later. -->
 
 <ng-template #loading>
   <div>Hello World!</div>
 </ng-template>
 
+<!-- Here we display the above template inside an ng-container-->
+
 <ng-container *ngTemplateOutlet="loading"></ng-container>
+
+<!-- and here we do the same thing, but display it inside a div.-->
+
 <div *ngTemplateOutlet="loading"></div>
+
+
 
 <br />
 
@@ -14,9 +23,27 @@
 
 <!-- version 1: Passing three variables in, one of which goes into $explicit-->
 
-<ng-template #rectTemplateA let-w="w" let-h="h" let-letters>
+<!-- Here we have another template, but this one has three variables it will *receive* -->
+<!-- Look at the two ng-container's after the template, and notice how we're populating
+     an attribute called "context". In the first one, there are three members:
+
+     {
+       w: 10,
+       h: 20,
+       $implicit: 'abc'
+     }
+    
+     Now look at the ng-template. It's receiving those three values and placing them
+     in the following variables:
+
+      * myW gets the value that's in w
+      * myH gets the value that's in h
+      * letters gets the value that's in $explicit
+    
+-->
+<ng-template #rectTemplateA let-myW="w" let-myH="h" let-letters>
   <div>
-    Rectangle width {{w}} by {{h}} named {{ letters }} has area {{ w * h }}
+    Rectangle width {{myW}} by {{myH}} named {{ letters }} has area {{ myW * myH }}
   </div>
 </ng-template>
 <ng-container *ngTemplateOutlet="rectTemplateA; context:{w:10,h:20, $implicit:'abc'}"></ng-container>
@@ -25,6 +52,16 @@
 <br />
 
 <!-- version 2: Passing an object to $implicit-->
+<!-- Here, to mix it up a bit, instead of using three different variables, we're putting them 
+     all inside the thing called $explicit. The object has three members: w, h, name.
+    
+    Then the template will copy those values into the "rect" variable.
+
+    Look inside the template: We're accessing rect.w, rect.h, andd rect.name, which
+    for the first ng-container will contain the values 10, 20, and 'abc'. For the second
+    ng-container they'll contain the values 2.5, 3.7, and 'def'.
+
+-->
 
 <ng-template #rectTemplate let-rect>
   <div>
